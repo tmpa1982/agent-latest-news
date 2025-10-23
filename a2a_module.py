@@ -4,12 +4,19 @@ from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import (
     AgentCapabilities,
     AgentCard,
+    AgentSkill,
 )
 
 from agent_executor import LatestNewsAgentExecutor
 
 class A2AModule:
     def __init__(self, host: str, port: int):
+        skill = AgentSkill(
+            id="latest_news_skill",
+            name="Get Latest News",
+            description="Provides the latest news updates.",
+            tags=["news", "updates"],
+        )
         agent_card = AgentCard(
             name="Latest News Agent",
             description="An agent that provides the latest news updates.",
@@ -18,7 +25,7 @@ class A2AModule:
             default_input_modes=["text"],
             default_output_modes=["text"],
             capabilities=AgentCapabilities(),
-            skills=[],
+            skills=[skill],
         )
         request_handler = DefaultRequestHandler(
             agent_executor=LatestNewsAgentExecutor(),
