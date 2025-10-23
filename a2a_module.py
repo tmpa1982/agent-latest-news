@@ -13,7 +13,7 @@ class A2AModule:
         agent_card = AgentCard(
             name="Latest News Agent",
             description="An agent that provides the latest news updates.",
-            url=f"http://${host}:{port}",
+            url=f"http://{host}:{port}",
             version="1.0.0",
             default_input_modes=["text"],
             default_output_modes=["text"],
