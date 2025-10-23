@@ -1,3 +1,4 @@
+import socket
 import uvicorn
 
 from a2a.server.apps import A2AStarletteApplication
@@ -7,10 +8,11 @@ from a2a.types import (
 )
 
 def main():
+    hostname = socket.gethostname()
     agent_card = AgentCard(
         name="Latest News Agent",
         description="An agent that provides the latest news updates.",
-        url="http://localhost:8081",
+        url=f"http://${hostname}:8081",
         version="1.0.0",
         default_input_modes=["text"],
         default_output_modes=["text"],
