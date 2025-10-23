@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import AsyncExitStack
 
@@ -9,7 +10,16 @@ class MCPModule:
         self.server_script_path = server_script_path
         self.exit_stack = AsyncExitStack()
 
-    async def connect(self):
+    def sync_connect(self):
+        asyncio.run(self.__connect_and_close())
+
+    async def __connect_and_close(self):
+        try:
+            await self.__connect()
+        finally:
+            await self.__close()
+
+    async def __connect(self):
         params = StdioServerParameters(
             command="python",
             args=[self.server_script_path],
@@ -22,5 +32,5 @@ class MCPModule:
         tools = await session.list_tools()
         logging.info(f"Connected to MCP server with tools: {tools}")
 
-    async def close(self):
+    async def __close(self):
         await self.exit_stack.aclose()

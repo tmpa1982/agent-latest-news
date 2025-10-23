@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import uvicorn
 
@@ -10,19 +9,14 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
 
-async def setupMcp():
-    mcp = MCPModule(
-        server_script_path="../mcp-news/main.py"
-    )
-    try:
-        await mcp.connect()
-    finally:
-        await mcp.close()
-
 def main():
-    asyncio.run(setupMcp())
+    server_script_path="../mcp-news/main.py"
     hostname = "localhost"
     port = 8081
+    mcp = MCPModule(
+        server_script_path=server_script_path
+    )
+    mcp.sync_connect()
     a2a = A2AModule(host=hostname, port=port)
     uvicorn.run(a2a.get_starlette(), port=port)
 
