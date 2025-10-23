@@ -8,9 +8,10 @@ from a2a.types import (
 )
 
 from agent_executor import LatestNewsAgentExecutor
+from latest_news_agent import LatestNewsAgent
 
 class A2AModule:
-    def __init__(self, host: str, port: int):
+    def __init__(self, host: str, port: int, agent: LatestNewsAgent):
         skill = AgentSkill(
             id="latest_news_skill",
             name="Get Latest News",
@@ -28,7 +29,7 @@ class A2AModule:
             skills=[skill],
         )
         request_handler = DefaultRequestHandler(
-            agent_executor=LatestNewsAgentExecutor(),
+            agent_executor=LatestNewsAgentExecutor(agent),
             task_store=InMemoryTaskStore(),
         )
         self.app = A2AStarletteApplication(
