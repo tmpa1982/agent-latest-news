@@ -9,7 +9,8 @@ class LatestNewsAgentExecutor(AgentExecutor):
         self.agent = agent
 
     async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
-        result = await self.agent.invoke()
+        message = context.get_user_input()
+        result = await self.agent.invoke(message)
         await event_queue.enqueue_event(new_agent_text_message(result))
 
     async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
