@@ -7,7 +7,6 @@ import uvicorn
 from a2a_module import A2AModule
 from latest_news_agent import LatestNewsAgent
 from mcp_module import MCPModule
-from tools import LLMTools
 
 load_dotenv()
 
@@ -29,7 +28,6 @@ async def main():
         server_script_path=server_script_path
     )
     await mcp.connect()
-    tools = LLMTools()
     a2a = A2AModule(
         host=hostname,
         port=port,
