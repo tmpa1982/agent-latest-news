@@ -19,6 +19,10 @@ class LatestNewsAgent:
     async def invoke(self, message: str) -> str:
         response = await self.__call_model([
             {
+                "role": "system",
+                "content": "You are a member of a team writing jokes for a comedy show. Your responsibility is to curate news headlines that the joke writers can use for the setup.",
+            },
+            {
                 "role": "user",
                 "content": message,
             }
