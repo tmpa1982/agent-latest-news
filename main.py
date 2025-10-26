@@ -31,15 +31,12 @@ async def main():
     a2a = A2AModule(
         host=hostname,
         port=port,
-        agent=LatestNewsAgent(api_key, model_name, mcp.get_openai_tools(), mcp.call_tool),
+        agent=LatestNewsAgent(api_key, model_name, mcp.get_openai_tools()),
     )
 
     config = uvicorn.Config(app=a2a.get_starlette(), host=hostname, port=port, loop="asyncio")
     server = uvicorn.Server(config)
-    try:
-        await server.serve()
-    finally:
-        await mcp.close()
+    await server.serve()
 
 if __name__ == "__main__":
     asyncio.run(main())
