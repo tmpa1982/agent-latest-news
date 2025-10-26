@@ -1,27 +1,13 @@
-import asyncio
 import logging
-from contextlib import AsyncExitStack
 
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
+from langchain_mcp_adapters.client import MultiServerMCPClient  
 
 class MCPModule:
     def __init__(self, server_script_path: str):
         self.server_script_path = server_script_path
-        self.exit_stack = AsyncExitStack()
 
     def get_openai_tools(self):
-        openai_tools = []
-        for t in self.tools.tools:
-            openai_tools.append({
-                "type": "function",
-                "function": {
-                    "name": t.name,
-                    "description": t.description or t.title or f"MCP tool {t.name}",
-                    "parameters": t.inputSchema or {"type": "object", "properties": {}},
-                },
-            })
-        return openai_tools
+        return self.tools
 
     async def call_tool(self, tool_name: str, **kwargs):
         logging.info(f"Calling MCP tool {tool_name} with args: {kwargs}")
@@ -35,18 +21,18 @@ class MCPModule:
         return tool_response.model_dump_json()
 
     async def connect(self):
-        params = StdioServerParameters(
-            command="python",
-            args=[self.server_script_path],
+        client = MultiServerMCPClient(
+            {
+                "math": {
+                    "transport": "stdio",
+                    "command": "python",
+                    "args": [self.server_script_path],
+                },
+            }
         )
-        logging.info(f"Connecting to MCP server with params: {params}")
-        stdio_transport = await self.exit_stack.enter_async_context(stdio_client(params))
-        stdio, write = stdio_transport
-        self.session = await self.exit_stack.enter_async_context(ClientSession(stdio, write))
-        await self.session.initialize()
-        self.tools = await self.session.list_tools()
+
+        self.tools = await client.get_tools()
         logging.info(f"Connected to MCP server with tools: {self.tools}")
 
     async def close(self):
-        await self.exit_stack.aclose()
         logging.info("MCPModule connection closed")
