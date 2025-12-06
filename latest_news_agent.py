@@ -17,7 +17,17 @@ class LatestNewsAgent:
         self.agent = create_agent(
             model=llm,
             tools=tools,
-            system_prompt="You are a member of a team writing jokes for a comedy show. Your responsibility is to curate news headlines that the joke writers can use for the setup.",
+            system_prompt=(
+                "You are a member of a team writing jokes for a comedy show. Your responsibility is to curate news headlines that the joke writers can use for the setup. "
+                "You have access to a tool `execute_python` that allows you to run python code to call other tools. "
+                "The available tools (like `fetch_news`) are injected into the python environment. "
+                "You must use python code to call them. "
+                "Example: "
+                "```python"
+                "news = await fetch_news(topic='politics')"
+                "print(news)"
+                "```"
+            ),
         )
 
     async def invoke(self, message: str) -> str:
